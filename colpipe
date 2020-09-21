@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Author:         ihsan, ihsanl[at]pm[dot]me
+# Description:    Pipe a specific column to a command.
+# First appeared: 2020 Sep 22 22:15:00 UTC
+# License:        MIT
+
+field=1
+while getopts :f:c: args; do
+	case $args in
+		(f) field="$OPTARG";;
+		(c) usercommand="${OPTARG}";;
+	esac
+done
+
+awk 'BEGIN { FS=OFS="\t" }
+{
+	tmp = "echo "$'$field'" | '"$usercommand"'"
+	tmp | getline processed
+	close(tmp)
+	$'$field'=processed
+	print
+	fflush()
+}'
